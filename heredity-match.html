@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heredity Match – Key Concepts 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#1f2340;--muted:#5b6080;--bg:#fbf8f2;--line:#e8e4da;
+    --violet:#6c5ce7;--violet-l:#efecff;--blue:#2f80ed;--blue-l:#e8f1ff;--teal:#0f9d8a;--teal-l:#e2f6f2;--coral:#e8603c;--coral-l:#fdece6;
+    --ok:#2e9e5b;--bad:#e5484d;--amber:#f2a516;--green:#4caf50}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,sans-serif;-webkit-tap-highlight-color:transparent}
+  .wrap{max-width:1000px;margin:0 auto;padding:22px 16px 40px}
+  .eyebrow{font-family:Fredoka;font-weight:600;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  h1{font-family:Fredoka;font-weight:700;font-size:38px;margin:4px 0 6px;line-height:1}
+  .how{color:var(--muted);font-weight:700;margin:0 0 16px}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+  .round{font-family:Fredoka;font-weight:600;background:var(--ink);color:#fff;border-radius:99px;padding:7px 16px}
+  .stat{background:#fff;border:2px solid var(--line);border-radius:99px;padding:6px 14px;font-weight:800}
+  .stat b{font-family:Fredoka}
+  .board{display:grid;grid-template-columns:1fr 1.6fr;gap:18px}
+  @media(max-width:640px){.board{grid-template-columns:1fr}}
+  .col{display:flex;flex-direction:column;gap:12px}
+  .colh{font-family:Fredoka;font-weight:600;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .item{background:#fff;border:3px solid var(--line);border-radius:18px;padding:14px 16px;cursor:pointer;user-select:none;
+    transition:transform .12s,border-color .15s,box-shadow .15s,background .15s;min-height:66px;display:flex;align-items:center;gap:12px;font-weight:800;font-size:18px;line-height:1.3}
+  .item:hover{transform:translateY(-2px);box-shadow:0 10px 20px -14px rgba(31,35,64,.45)}
+  .term{font-family:Fredoka;font-weight:700;font-size:24px}
+  .term i{width:14px;height:14px;border-radius:50%;flex:none}
+  .item.sel{border-color:var(--ink);box-shadow:0 0 0 4px #1f234022}
+  .item.done{cursor:default;transform:none;box-shadow:none}
+  .item.shake{animation:shake .4s;border-color:var(--bad);background:#fff1f1}
+  @keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+  .item .tick{margin-left:auto;font-family:Fredoka;font-size:15px;padding:3px 10px;border-radius:99px;color:#fff;display:none}
+  .item.done .tick{display:inline-block}
+  .tile{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;color:#fff;font-weight:800;font-size:19px;padding-bottom:2px;vertical-align:middle}
+  .Y{background:var(--amber)} .y{background:var(--green)}
+  .msg{min-height:30px;margin-top:14px;font-weight:800;text-align:center;font-size:18px}
+  .msg.ok{color:var(--ok)} .msg.bad{color:var(--bad)}
+  .btns{display:flex;justify-content:center;gap:10px;margin-top:8px}
+  button{font-family:Fredoka;font-weight:600;font-size:18px;border:none;border-radius:14px;padding:11px 22px;cursor:pointer;background:var(--violet);color:#fff}
+  button.sec{background:#fff;color:var(--ink);border:2px solid var(--line)}
+  .end{display:none;text-align:center;background:#fff;border-radius:26px;padding:34px 20px;border:3px solid var(--line)}
+  .end .stars{font-size:54px;letter-spacing:6px}
+  .end h2{font-family:Fredoka;font-size:34px;margin:8px 0}
+  .end p{font-weight:700;color:var(--muted);font-size:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Heredity · Key Concepts 1</div>
+  <h1>Heredity Match</h1>
+  <p class="how">Tap a word on the left, then tap the card that matches it.</p>
+
+  <div id="game">
+    <div class="bar">
+      <span class="round" id="roundLbl"></span>
+      <span class="stat">Matched: <b id="sMatch">0</b>/<b id="sTot">4</b></span>
+      <span class="stat">Mistakes: <b id="sMiss">0</b></span>
+    </div>
+    <div class="board">
+      <div class="col"><div class="colh">Words</div><div class="col" id="left"></div></div>
+      <div class="col"><div class="colh" id="rightH"></div><div class="col" id="right"></div></div>
+    </div>
+    <div class="msg" id="msg"></div>
+    <div class="btns"><button id="next" style="display:none">Next round →</button></div>
+  </div>
+
+  <div class="end" id="end">
+    <div class="stars" id="stars"></div>
+    <h2>Well done!</h2>
+    <p id="endTxt"></p>
+    <div class="btns"><button id="again">Play again</button></div>
+  </div>
+</div>
+
+<script>
+const TERMS=[
+  {k:'H',name:'Heredity',c:'var(--violet)',l:'var(--violet-l)'},
+  {k:'T',name:'Trait',c:'var(--blue)',l:'var(--blue-l)'},
+  {k:'G',name:'Genotype',c:'var(--teal)',l:'var(--teal-l)'},
+  {k:'P',name:'Phenotype',c:'var(--coral)',l:'var(--coral-l)'}
+];
+const Yy='<span class="tile Y">Y</span><span class="tile y">y</span>';
+const ROUNDS=[
+  {title:'Round 1 · Definitions',head:'Definitions',cards:{
+    H:'The passing of traits from parents to their offspring.',
+    T:'An observable feature of a living thing.',
+    G:'The pair of alleles a living thing has for a trait. We write it with letters.',
+    P:'How a trait looks. It depends on the genotype and the environment.'}},
+  {title:'Round 2 · Examples',head:'Examples',cards:{
+    H:'A child has the same eye color as her mother.',
+    T:'Eye color, height, pea seed color',
+    G:Yy+'&nbsp; written as letters',
+    P:'A yellow pea seed'}}
+];
+let r=0,sel=null,matched=0,miss=0,totalMiss=0;
+const $=id=>document.getElementById(id);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+function start(){
+  const R=ROUNDS[r]; matched=0; miss=0; sel=null;
+  $('roundLbl').textContent=R.title; $('rightH').textContent=R.head;
+  $('sMatch').textContent=0; $('sMiss').textContent=0; $('msg').textContent=''; $('msg').className='msg';
+  $('next').style.display='none';
+  $('left').innerHTML=shuffle(TERMS).map(t=>`<div class="item term" data-k="${t.k}"><i style="background:${t.c}"></i>${t.name}<span class="tick" style="background:${t.c}">✓</span></div>`).join('');
+  $('right').innerHTML=shuffle(TERMS).map(t=>`<div class="item card" data-k="${t.k}">${R.cards[t.k]}<span class="tick">✓</span></div>`).join('');
+  document.querySelectorAll('#left .item').forEach(el=>el.onclick=()=>pickTerm(el));
+  document.querySelectorAll('#right .item').forEach(el=>el.onclick=()=>pickCard(el));
+}
+function pickTerm(el){
+  if(el.classList.contains('done'))return;
+  document.querySelectorAll('#left .item').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel'); sel=el; $('msg').textContent='Now tap the matching card.'; $('msg').className='msg';
+}
+function pickCard(el){
+  if(el.classList.contains('done'))return;
+  if(!sel){ $('msg').textContent='First tap a word on the left.'; $('msg').className='msg'; return; }
+  if(el.dataset.k===sel.dataset.k){
+    const t=TERMS.find(t=>t.k===el.dataset.k);
+    [sel,el].forEach(e=>{e.classList.remove('sel');e.classList.add('done');e.style.borderColor=t.c;e.style.background=t.l;});
+    el.querySelector('.tick').style.background=t.c;
+    sel=null; matched++; $('sMatch').textContent=matched;
+    $('msg').textContent='Correct! 🎉'; $('msg').className='msg ok';
+    if(matched===TERMS.length){
+      if(r<ROUNDS.length-1){ $('msg').textContent='Round complete! 🎉'; $('next').style.display='inline-block'; }
+      else setTimeout(finish,700);
+    }
+  }else{
+    miss++; totalMiss++; $('sMiss').textContent=miss;
+    el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
+    $('msg').textContent='Not quite. Try again!'; $('msg').className='msg bad';
+  }
+}
+function finish(){
+  $('game').style.display='none'; $('end').style.display='block';
+  const s=totalMiss===0?3:totalMiss<=3?2:1;
+  $('stars').textContent='★'.repeat(s)+'☆'.repeat(3-s);
+  $('endTxt').textContent=`You finished all ${ROUNDS.length} rounds with ${totalMiss} mistake${totalMiss===1?'':'s'}.`;
+}
+$('next').onclick=()=>{r++;start();};
+$('again').onclick=()=>{r=0;totalMiss=0;$('end').style.display='none';$('game').style.display='block';start();};
+start();
+</script>
+</body>
+</html>

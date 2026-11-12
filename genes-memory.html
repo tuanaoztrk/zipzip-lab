@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Genes &amp; Alleles Memory – Key Concepts 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#1f2340;--muted:#5b6080;--bg:#fbf8f2;--line:#e8e4da;--amber:#f2a516;--green:#4caf50}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,sans-serif;-webkit-tap-highlight-color:transparent}
+  .wrap{max-width:1000px;margin:0 auto;padding:22px 16px 40px}
+  .eyebrow{font-family:Fredoka;font-weight:600;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  h1{font-family:Fredoka;font-weight:700;font-size:38px;margin:4px 0 6px;line-height:1}
+  .how{color:var(--muted);font-weight:700;margin:0 0 16px}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+  .stat{background:#fff;border:2px solid var(--line);border-radius:99px;padding:6px 14px;font-weight:800}
+  .stat b{font-family:Fredoka}
+  .key{margin-left:auto;display:flex;gap:8px;align-items:center;font-weight:800;font-size:15px}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media(max-width:620px){.grid{grid-template-columns:repeat(3,1fr)}}
+  .card{aspect-ratio:4/3.3;perspective:900px;cursor:pointer;user-select:none}
+  .inner{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
+  .card.up .inner,.card.done .inner{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:10px}
+  .back{background:repeating-linear-gradient(45deg,#2b2f52,#2b2f52 10px,#323760 10px,#323760 20px);color:#fff;font-family:Fredoka;font-size:40px;box-shadow:0 10px 20px -14px rgba(0,0,0,.6)}
+  .back small{font-size:12px;letter-spacing:.14em;color:#aab0dc;margin-top:2px}
+  .front{transform:rotateY(180deg);background:#fff;border:3px solid var(--line)}
+  .front .tag{font-family:Fredoka;font-weight:600;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .front .term{font-family:Fredoka;font-weight:700;font-size:clamp(17px,2.6vw,26px);line-height:1.05}
+  .front .clue{font-weight:800;font-size:clamp(12.5px,1.7vw,16px);line-height:1.3}
+  .tiles{display:flex;gap:5px;justify-content:center;margin-top:7px}
+  .tile{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;color:#fff;font-weight:800;font-size:18px;padding-bottom:2px}
+  .Y{background:var(--amber)} .y{background:var(--green)}
+  .card.done .front{box-shadow:0 0 0 3px var(--c) inset;background:var(--l);border-color:var(--c)}
+  .card.done .term{color:var(--c)}
+  .card.miss .front{border-color:#e5484d;animation:shake .4s}
+  @keyframes shake{20%,60%{transform:rotateY(180deg) translateX(-5px)}40%,80%{transform:rotateY(180deg) translateX(5px)}}
+  .msg{min-height:30px;margin-top:14px;font-weight:800;text-align:center;font-size:18px}
+  .btns{display:flex;justify-content:center;gap:10px;margin-top:8px}
+  button{font-family:Fredoka;font-weight:600;font-size:18px;border:none;border-radius:14px;padding:11px 22px;cursor:pointer;background:#6c5ce7;color:#fff}
+  .end{display:none;text-align:center;background:#fff;border-radius:26px;padding:30px 20px;border:3px solid var(--line);margin-top:18px}
+  .end .stars{font-size:54px;letter-spacing:6px;color:#f2a516}
+  .end h2{font-family:Fredoka;font-size:34px;margin:6px 0}
+  .end p{font-weight:700;color:var(--muted);font-size:18px}
+  .list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;text-align:left;margin:18px auto 6px;max-width:860px}
+  .list div{border-radius:14px;padding:10px 14px;font-weight:700;font-size:15px;border-left:6px solid}
+  .list b{font-family:Fredoka;font-size:17px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Heredity · Key Concepts 2</div>
+  <h1>Genes &amp; Alleles Memory</h1>
+  <p class="how">Turn over two cards. Find each word and the card that explains it.</p>
+  <div class="bar">
+    <span class="stat">Pairs: <b id="sPairs">0</b>/6</span>
+    <span class="stat">Moves: <b id="sMoves">0</b></span>
+    <span class="key">Pea seed color: <span class="tile Y">Y</span> yellow <span class="tile y">y</span> green</span>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="msg" id="msg"></div>
+  <div class="btns"><button id="restart">Shuffle &amp; restart</button></div>
+  <div class="end" id="end">
+    <div class="stars" id="stars"></div>
+    <h2>All pairs found!</h2>
+    <p id="endTxt"></p>
+    <div class="list" id="list"></div>
+  </div>
+</div>
+<script>
+const T=(s)=>s.split('').map(ch=>`<span class="tile ${ch}">${ch}</span>`).join('');
+const PAIRS=[
+  {id:'gene',name:'Gene',c:'#0f9d8a',l:'#e2f6f2',clue:'A piece of DNA that carries the information for a trait.'},
+  {id:'allele',name:'Allele',c:'#6c5ce7',l:'#efecff',clue:'A different version of the same gene.<div class="tiles">'+T('Y')+'<span style="font-weight:800;align-self:center">or</span>'+T('y')+'</div>'},
+  {id:'dom',name:'Dominant Allele',c:'#b97800',l:'#fff4dc',clue:'One copy is enough to show its effect.<div class="tiles">'+T('Y')+'</div>'},
+  {id:'rec',name:'Recessive Allele',c:'#2e7d32',l:'#e7f5e8',clue:'Shows its effect only with two copies.<div class="tiles">'+T('y')+'</div>'},
+  {id:'pure',name:'Purebred',c:'#2f80ed',l:'#e8f1ff',clue:'Two identical alleles.<div class="tiles">'+T('YY')+'<span style="font-weight:800;align-self:center">or</span>'+T('yy')+'</div>'},
+  {id:'hyb',name:'Hybrid',c:'#e8603c',l:'#fdece6',clue:'Two different alleles.<div class="tiles">'+T('Yy')+'</div>'}
+];
+const $=id=>document.getElementById(id);
+let open=[],lock=false,moves=0,pairs=0;
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+function build(){
+  open=[];lock=false;moves=0;pairs=0;
+  $('sPairs').textContent=0;$('sMoves').textContent=0;$('msg').textContent='';$('end').style.display='none';
+  const cards=shuffle(PAIRS.flatMap(p=>[{p,kind:'term'},{p,kind:'clue'}]));
+  $('grid').innerHTML=cards.map((c,i)=>`
+    <div class="card" data-id="${c.p.id}" data-i="${i}" style="--c:${c.p.c};--l:${c.p.l}">
+      <div class="inner">
+        <div class="face back">?<small>FLIP</small></div>
+        <div class="face front">${c.kind==='term'
+          ?`<div class="tag">Word</div><div class="term">${c.p.name}</div>`
+          :`<div class="tag">Meaning</div><div class="clue">${c.p.clue}</div>`}</div>
+      </div>
+    </div>`).join('');
+  document.querySelectorAll('.card').forEach(el=>el.onclick=()=>flip(el));
+}
+function flip(el){
+  if(lock||el.classList.contains('up')||el.classList.contains('done'))return;
+  el.classList.add('up'); open.push(el);
+  if(open.length<2)return;
+  moves++; $('sMoves').textContent=moves;
+  const [a,b]=open;
+  if(a.dataset.id===b.dataset.id){
+    a.classList.add('done');b.classList.add('done');open=[];pairs++;
+    $('sPairs').textContent=pairs;
+    const p=PAIRS.find(p=>p.id===a.dataset.id);
+    $('msg').innerHTML=`<span style="color:${p.c}">Match: ${p.name}! 🎉</span>`;
+    if(pairs===PAIRS.length)setTimeout(finish,700);
+  }else{
+    lock=true; $('msg').innerHTML='<span style="color:#e5484d">Not a pair. Remember where they are!</span>';
+    setTimeout(()=>{a.classList.add('miss');b.classList.add('miss');},450);
+    setTimeout(()=>{a.classList.remove('up','miss');b.classList.remove('up','miss');open=[];lock=false;},1300);
+  }
+}
+function finish(){
+  const s=moves<=9?3:moves<=14?2:1;
+  $('stars').textContent='★'.repeat(s)+'☆'.repeat(3-s);
+  $('endTxt').textContent=`You found all 6 pairs in ${moves} moves. Here is what you matched:`;
+  $('list').innerHTML=PAIRS.map(p=>`<div style="background:${p.l};border-color:${p.c}"><b style="color:${p.c}">${p.name}:</b> ${p.clue}</div>`).join('');
+  $('end').style.display='block'; $('end').scrollIntoView({behavior:'smooth'});
+}
+$('restart').onclick=build;
+build();
+</script>
+</body>
+</html>
