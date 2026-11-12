@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zıpzıp Laboratuvarı – Gizli Kartlar</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f1ea; --panel:#fffdf8; --ink:#2a2733; --muted:#6d6878;
+    --star:#f2a516; --circle:#9aa3b5; --accent:#3b7d6e; --accent2:#e2603f;
+    --line:#e3ddd0; --body:#8fd1c0; --body2:#6fbfab;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',sans-serif;}
+  .wrap{max-width:1100px;margin:0 auto;padding:20px 16px 40px}
+  header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}
+  h1{font-family:'Baloo 2',cursive;font-size:2.1rem;margin:0;line-height:1}
+  h1 span{color:var(--accent)}
+  .sub{color:var(--muted);margin:4px 0 0}
+  .rule{background:var(--ink);color:#fff;border-radius:14px;padding:12px 16px;font-weight:600;font-size:.98rem;line-height:1.5}
+  .rule b{color:var(--star)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch}
+  .kids{margin-top:14px;background:linear-gradient(180deg,#fffdf8,#f7f2e6);border:2px solid var(--line);border-radius:18px;padding:14px}
+  .kidshead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+  .kidshead h2{font-family:'Baloo 2',cursive;font-size:1.3rem;margin:0}
+  .babies{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media(max-width:760px){.babies{grid-template-columns:1fr 1fr}}
+  .baby{padding:10px}
+  .baby h3{font-family:'Baloo 2';margin:0 0 4px;font-size:1.05rem}
+  .baby svg.zz{width:130px;height:115px}
+  .baby .k{width:42px;height:56px;font-size:1.5rem}
+  .baby.empty{opacity:.45;border-style:dashed;justify-content:center;min-height:250px}
+  .baby.empty .ph{font-family:'Baloo 2';font-size:3rem;color:var(--muted)}
+  .card{background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center}
+  .card h2{font-family:'Baloo 2',cursive;font-size:1.25rem;margin:0 0 4px}
+  .tag{font-size:.85rem;font-weight:700;padding:3px 10px;border-radius:99px;background:#eef6f3;color:var(--accent)}
+  .tag.sark{background:#fdeee9;color:var(--accent2)}
+  svg.zz{width:170px;height:150px}
+  .pocket{display:flex;gap:10px;margin:10px 0 8px}
+  .k{width:54px;height:72px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:2rem;
+     border:2px solid var(--line);background:#fff;transition:transform .35s, box-shadow .2s;position:relative}
+  .k.hidden{background:repeating-linear-gradient(45deg,#4a4558,#4a4558 6px,#575166 6px,#575166 12px);border-color:#3a3646;color:transparent}
+  .k.hidden::after{content:"?";color:#fff;font-family:'Baloo 2';font-size:1.8rem;position:absolute}
+  .k.picked{transform:translateY(-10px);box-shadow:0 0 0 4px var(--star)}
+  .k.edit{cursor:pointer}
+  .k.edit:hover{box-shadow:0 0 0 3px var(--accent)}
+  .star{color:var(--star)} .circ{color:var(--circle)}
+  .pocketlbl{font-size:.8rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+  .baby{background:linear-gradient(180deg,#fffdf8,#f7f2e6)}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
+  button{font-family:'Baloo 2',cursive;font-weight:700;font-size:1rem;border:none;border-radius:12px;padding:9px 16px;cursor:pointer;transition:transform .1s, filter .15s}
+  button:active{transform:scale(.96)}
+  .pri{background:var(--accent);color:#fff}
+  .sec{background:#fff;color:var(--ink);border:2px solid var(--line)}
+  .warn{background:var(--accent2);color:#fff}
+  button:hover{filter:brightness(1.06)}
+  button:disabled{opacity:.5;cursor:default}
+  .bottom{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;margin-top:14px}
+  @media(max-width:860px){.bottom{grid-template-columns:1fr}}
+  .stats{display:flex;gap:10px;margin-bottom:10px}
+  .stat{flex:1;border-radius:14px;padding:10px;text-align:center;border:2px solid var(--line);background:#fff}
+  .stat .n{font-family:'Baloo 2';font-size:2rem;font-weight:800;line-height:1}
+  .stat.d .n{color:var(--accent)} .stat.s .n{color:var(--accent2)}
+  .bar{height:16px;border-radius:99px;background:#fdeee9;overflow:hidden;margin:4px 0 12px}
+  .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .4s}
+  table{width:100%;border-collapse:collapse;font-size:.92rem}
+  th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:center}
+  th{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  .tablebox{max-height:260px;overflow:auto;border-radius:12px;border:2px solid var(--line);background:#fff}
+  .q{background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:14px 16px}
+  .q h3,.log h3{font-family:'Baloo 2';margin:0 0 8px;font-size:1.15rem}
+  .q ol{margin:0;padding-left:20px;line-height:1.6}
+  .log{background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:14px 16px}
+  .teacher{margin-top:14px;background:#fff;border:2px dashed var(--line);border-radius:18px;padding:12px 16px}
+  .teacher summary{font-family:'Baloo 2';font-weight:700;cursor:pointer}
+  .teacher p{color:var(--muted);margin:8px 0}
+  .preset{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .toast{min-height:26px;font-weight:700;text-align:center;color:var(--accent2);margin-top:6px}
+  .surprise{animation:pop .6s}
+  @keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+  .modeinfo{font-size:.85rem;color:var(--muted);text-align:center;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>🔬 Zıpzıp <span>Laboratuvarı</span></h1>
+      <p class="sub">Gizli kartlar · Anne ve babadan 4 yavru oluştur, gözle, tahmin et!</p>
+    </div>
+    <div class="rule">Her Zıpzıpın cebinde 2 gizli kart var.<br>
+      En az bir <b>⭐</b> varsa → kulaklar <b>DİK</b> · İki kart da <b>⚪</b> ise → kulaklar <b>SARKIK</b></div>
+  </header>
+
+  <div class="grid">
+    <div class="card" id="pA">
+      <h2>👩 Anne Zıpzıp</h2>
+      <span class="tag" id="tagA"></span>
+      <svg class="zz" id="svgA" viewBox="0 0 170 150"></svg>
+      <div class="pocketlbl">Cebindeki kartlar</div>
+      <div class="pocket" id="cardsA"></div>
+    </div>
+
+    <div class="card" id="pB">
+      <h2>👨 Baba Zıpzıp</h2>
+      <span class="tag" id="tagB"></span>
+      <svg class="zz" id="svgB" viewBox="0 0 170 150"></svg>
+      <div class="pocketlbl">Cebindeki kartlar</div>
+      <div class="pocket" id="cardsB"></div>
+    </div>
+  </div>
+
+  <div class="btns" style="margin-top:12px">
+    <button class="sec" id="newP">🔄 Yeni anne-baba (gizemli)</button>
+    <button class="warn" id="reveal">👁️ Anne-babanın kartlarını aç</button>
+  </div>
+  <div class="modeinfo" id="modeinfo"></div>
+
+  <div class="kids">
+    <div class="kidshead">
+      <h2>🐣 Yavrular</h2>
+      <div class="btns" style="margin:0">
+        <button class="pri" id="b1">🎲 Yavru oluştur (0/4)</button>
+        <button class="sec" id="clear">🧹 Yavruları temizle</button>
+      </div>
+    </div>
+    <div class="babies" id="babies"></div>
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <div class="bottom">
+    <div class="log">
+      <h3>📋 Kayıt Defteri</h3>
+      <div class="stats">
+        <div class="stat d"><div class="n" id="nD">0</div>Dik kulaklı</div>
+        <div class="stat s"><div class="n" id="nS">0</div>Sarkık kulaklı</div>
+        <div class="stat"><div class="n" id="nT">0</div>Toplam yavru</div>
+      </div>
+      <div class="bar"><i id="barI"></i></div>
+    </div>
+    <div class="q">
+      <h3>🤔 Düşün ve Tartış</h3>
+      <ol>
+        <li>İki <b>dik</b> kulaklı Zıpzıptan <b>sarkık</b> kulaklı yavru doğdu mu? Bu nasıl mümkün olabilir?</li>
+        <li>Kulakları aynı görünen iki Zıpzıpın cebindeki kartlar da aynı mı olmak zorunda?</li>
+        <li>Sadece kulaklara bakarak kimin kartlarını <b>kesin</b> bilebilirsin?</li>
+        <li>Kartları açmadan önce yavrulara bakarak anne-babanın kartlarını tahmin et. Tahminin neye dayanıyor?</li>
+        <li>4 yavrudan kaçı dik, kaçı sarkık çıktı? Diğer grupların sonuçlarıyla karşılaştırınca ne fark ediyorsun?</li>
+      </ol>
+    </div>
+  </div>
+
+  <details class="teacher">
+    <summary>🍎 Öğretmen paneli</summary>
+    <p>Hazır bir anne-baba seçebilir ya da yukarıdaki kartlara <b>tıklayarak</b> değiştirebilirsiniz (kartlar açıkken). Keşfetme aşaması için önerilen başlangıç: <b>⭐⚪ × ⭐⚪</b>. Bu eşleşmede öğrenciler iki dik kulaklıdan sarkık yavru doğmasıyla şaşırır.</p>
+    <div class="preset">
+      <button class="sec" data-p="SC,SC">⭐⚪ × ⭐⚪ (önerilen)</button>
+      <button class="sec" data-p="SS,CC">⭐⭐ × ⚪⚪</button>
+      <button class="sec" data-p="SC,CC">⭐⚪ × ⚪⚪</button>
+      <button class="sec" data-p="SS,SC">⭐⭐ × ⭐⚪</button>
+      <button class="sec" data-p="CC,CC">⚪⚪ × ⚪⚪</button>
+    </div>
+    <p style="font-size:.85rem">Açıklama aşamasında karşılıkları: cepteki kartlar = <b>genotip</b>, görünen kulak = <b>fenotip</b>, ⭐ = <b>baskın</b> gen, ⚪ = <b>çekinik</b> gen. (Bu terimler öğrenci ekranında bilinçli olarak geçmiyor.)</p>
+  </details>
+</div>
+
+<script>
+const S='S',C='C';
+let A=[S,C], B=[S,C], revealed=false, rows=[];
+const sym=k=>k===S?'<span class="star">⭐</span>':'<span class="circ">⚪</span>';
+const isDik=g=>g.includes(S);
+
+function zipzip(dik, hue){
+  const body = hue==='b' ? ['#f6c48b','#e9a865'] : hue==='c' ? ['#c9b6f0','#ad95e3'] : ['#8fd1c0','#6fbfab'];
+  const ears = dik
+    ? `<ellipse cx="58" cy="38" rx="13" ry="32" fill="${body[1]}" transform="rotate(-12 58 38)"/>
+       <ellipse cx="58" cy="40" rx="6" ry="22" fill="#f7d6dc" transform="rotate(-12 58 40)"/>
+       <ellipse cx="112" cy="38" rx="13" ry="32" fill="${body[1]}" transform="rotate(12 112 38)"/>
+       <ellipse cx="112" cy="40" rx="6" ry="22" fill="#f7d6dc" transform="rotate(12 112 40)"/>`
+    : `<ellipse cx="38" cy="78" rx="12" ry="32" fill="${body[1]}" transform="rotate(38 38 78)"/>
+       <ellipse cx="38" cy="80" rx="5" ry="22" fill="#f7d6dc" transform="rotate(38 38 80)"/>
+       <ellipse cx="132" cy="78" rx="12" ry="32" fill="${body[1]}" transform="rotate(-38 132 78)"/>
+       <ellipse cx="132" cy="80" rx="5" ry="22" fill="#f7d6dc" transform="rotate(-38 132 80)"/>`;
+  return `${dik?ears:''}
+    <ellipse cx="85" cy="140" rx="46" ry="6" fill="#0001"/>
+    <circle cx="85" cy="92" r="46" fill="${body[0]}"/>
+    ${dik?'':ears}
+    <circle cx="70" cy="86" r="8" fill="#fff"/><circle cx="100" cy="86" r="8" fill="#fff"/>
+    <circle cx="72" cy="88" r="4.5" fill="#2a2733"/><circle cx="102" cy="88" r="4.5" fill="#2a2733"/>
+    <ellipse cx="85" cy="102" rx="5" ry="3.5" fill="#2a2733"/>
+    <path d="M77 110 Q85 117 93 110" stroke="#2a2733" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <circle cx="60" cy="104" r="6" fill="#f59fa9" opacity=".5"/><circle cx="110" cy="104" r="6" fill="#f59fa9" opacity=".5"/>
+    <ellipse cx="68" cy="134" rx="10" ry="6" fill="${body[1]}"/><ellipse cx="102" cy="134" rx="10" ry="6" fill="${body[1]}"/>`;
+}
+
+function renderParent(id, g, hue){
+  document.getElementById('svg'+id).innerHTML = zipzip(isDik(g), hue);
+  const t=document.getElementById('tag'+id);
+  t.textContent = isDik(g)?'Kulaklar DİK':'Kulaklar SARKIK';
+  t.className = 'tag'+(isDik(g)?'':' sark');
+  const box=document.getElementById('cards'+id);
+  box.innerHTML='';
+  g.forEach((k,i)=>{
+    const d=document.createElement('div');
+    d.className='k'+(revealed?' edit':' hidden');
+    d.innerHTML=revealed?sym(k):'';
+    if(revealed){ d.title='Değiştirmek için tıkla'; d.onclick=()=>{ g[i]=g[i]===S?C:S; renderAll(); resetBabies(); }; }
+    box.appendChild(d);
+  });
+}
+function renderAll(){
+  renderParent('A',A,'a'); renderParent('B',B,'b');
+  document.getElementById('reveal').textContent = revealed ? '🙈 Kartları gizle' : '👁️ Anne-babanın kartlarını aç';
+  document.getElementById('modeinfo').textContent = revealed
+    ? 'Kartlar açık. Kartlara tıklayarak anne-babayı değiştirebilirsin.'
+    : 'Anne-babanın kartları gizli. Yavrulara bakarak onların kartlarını tahmin etmeye çalış!';
+}
+function rnd(){ return Math.random()<.5?S:C; }
+
+const MAX=4;
+function makeBaby(){
+  if(rows.length>=MAX) return;
+  const ia=Math.floor(Math.random()*2), ib=Math.floor(Math.random()*2);
+  const g=[A[ia],B[ib]];
+  const dik=isDik(g);
+  rows.push({g,dik,surprise:isDik(A)&&isDik(B)&&!dik});
+  const ka=document.querySelectorAll('#cardsA .k')[ia], kb=document.querySelectorAll('#cardsB .k')[ib];
+  ka.classList.add('picked'); kb.classList.add('picked');
+  setTimeout(()=>{ka.classList.remove('picked');kb.classList.remove('picked');},700);
+  renderBabies(true);
+}
+function renderBabies(animLast=false){
+  const box=document.getElementById('babies');
+  let html='';
+  for(let i=0;i<MAX;i++){
+    const r=rows[i];
+    if(!r){ html+=`<div class="card baby empty"><h3>Yavru ${i+1}</h3><div class="ph">?</div></div>`; continue; }
+    html+=`<div class="card baby">
+      <h3>Yavru ${i+1}</h3>
+      <span class="tag${r.dik?'':' sark'}">Kulaklar ${r.dik?'DİK':'SARKIK'}</span>
+      <svg class="zz${animLast&&i===rows.length-1?' surprise':''}" viewBox="0 0 170 150">${zipzip(r.dik,'c')}</svg>
+      <div class="pocketlbl">Kartları</div>
+      <div class="pocket">${r.g.map(k=>`<div class="k">${sym(k)}</div>`).join('')}</div>
+    </div>`;
+  }
+  box.innerHTML=html;
+  const last=rows[rows.length-1];
+  document.getElementById('toast').textContent =
+    animLast && last && last.surprise ? '😮 İki dik kulaklıdan sarkık kulaklı yavru! Nasıl olabilir?' :
+    rows.length>=MAX ? '4 yavru tamamlandı. Şimdi soruları tartışın!' : '';
+  const b=document.getElementById('b1');
+  b.textContent=`🎲 Yavru oluştur (${rows.length}/${MAX})`;
+  b.disabled = rows.length>=MAX;
+  renderLog();
+}
+function renderLog(){
+  const d=rows.filter(r=>r.dik).length, s=rows.length-d;
+  document.getElementById('nD').textContent=d;
+  document.getElementById('nS').textContent=s;
+  document.getElementById('nT').textContent=rows.length;
+  document.getElementById('barI').style.width = rows.length? (d/rows.length*100)+'%' : '0';
+}
+function resetBabies(){ rows=[]; renderBabies(); }
+
+document.getElementById('b1').onclick=makeBaby;
+document.getElementById('newP').onclick=()=>{ A=[rnd(),rnd()]; B=[rnd(),rnd()]; revealed=false; renderAll(); resetBabies(); };
+document.getElementById('reveal').onclick=()=>{ revealed=!revealed; renderAll(); };
+document.getElementById('clear').onclick=resetBabies;
+document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{
+  const [a,bb]=b.dataset.p.split(','); A=a.split(''); B=bb.split(''); revealed=false; renderAll(); resetBabies();
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+renderAll(); resetBabies();
+</script>
+</body>
+</html>
